@@ -1,12 +1,17 @@
-def inv_trans_smp(marg):
+def inv_trans_smp(marg,xL = -10, xR = 10,thrsh = 1e-4,x0 = 0):
+    '''
+    Performs a sample of a probability distribution P(x) given its marginal
+        marg is a function representing the marginal distribution
+        xL and xR are limits for bisection. Most distns here will be mostly within [-3,3]
+        thrsh is the threshold for the bisection search. If within trsh, accept this value
+        x0 is the starting point for bisection this should be the mean of the distribtion.
+    '''
     from numpy import random as rnd 
-    xL = -10 #TODO: Explain these limits
-    xR = 10
-    thrsh = 1e-4
+    # These are the search limits
+
     u = rnd.rand()
-    x = 0
-    while abs(marg(x) - u) > thrsh:
- 
+    x = x0
+    while abs(marg(x) - u) > thrsh: 
         if marg(x) < u:
             xL = x
             x = (x+xR)/2
@@ -46,6 +51,13 @@ def generate_basis(y):
     return q
 
 def gen_photocurrent(modes,marg,marg_vac,scl = 1):
+    '''
+        Simulate a single time domain trace from a homodyne detector.
+        modes: a set of orthonormal modes from generate_basis()
+        marg: the marginal distribution corresponding to the quantum state
+        marg_vac: the background state. Normally this is the vacuum but could be thermal
+        scl: can scale the homodyne photocurrent by this value
+    '''
     import numpy as np
     Npts = len(modes)
     ihd = np.zeros(Npts)
@@ -54,5 +66,5 @@ def gen_photocurrent(modes,marg,marg_vac,scl = 1):
     for k in range(1,Npts):
         q0 = inv_trans_smp(marg_vac)
         ihd +=q0*modes[:,k]
-    return ihd
+    return ihd*scl
 
