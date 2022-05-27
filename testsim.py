@@ -17,11 +17,11 @@ def marginal_vac(*args):
 t = np.linspace(-1,1,100)
 y = np.exp(-0.5*(t/.1)**2)
 q = shd.generate_basis(y)
-# ih = np.zeros(len(t))
+
 ih_var = np.zeros(len(t))
 
 # Generate Niter samples
-Niter = 5000
+Niter = 1000
 quads = np.zeros(Niter) # Photocurrent
 
 # Start performance measurement
