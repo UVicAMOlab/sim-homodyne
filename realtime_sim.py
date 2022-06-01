@@ -17,28 +17,37 @@ def marginal_vac(*args):
     return shd.marginal_fock(0,float(args[0]))
 
 # Set up plot canvas
-fig, (ax1,ax2)= plt.subplots(1, 2, figsize=(10, 5))
+
+fig = plt.figure()
+spc = fig.add_gridspec(ncols =2,nrows = 2)
+ax_trc = fig.add_subplot(spc[0,:])
+ax_pts = fig.add_subplot(spc[1,0])
+ax_hist = fig.add_subplot(spc[1,1])
+
+# fig, axs = plt.subplots(2, 2, figsize=(10, 10))
 # Plots
-ln1, = ax1.plot([], [], lw=2)
-ln1b, = ax1.plot(t, y, lw=2)
-ln2, = ax2.plot([],[],'.',markersize=3)
+ln1, = ax_trc.plot([], [], lw=2)
+ln1b, = ax_trc.plot(t, y, lw=2)
+ln2, = ax_pts.plot([],[],'.',markersize=3)
+h1 = ax_hist.hist(np.ones(20))
 
 # GTL for Animation
 def init_animation():        
-    #graph parameters for Ellipse
-    ax1.set_xlim(-1.0, 1.0)
-    ax1.set_ylim(-3.0, 3.0)
-    ax2.set_ylim(-10.0, 10.0)
-    return ln1,ln2,
+    ax_trc.set_xlim(-1.0, 1.0)
+    ax_trc.set_ylim(-3.0, 3.0)
+    ax_pts.set_ylim(-10.0, 10.0)
+    return ln1,ln1b,ln2,h1
 
-def animate_fun(idx):
-	global quads
-	ih0 = shd.gen_photocurrent(q,marginal,marginal_vac)
-	quads = np.append(quads,np.dot(ih0,y))
-	ln1.set_data(t,ih0)
-	ln2.set_data(1+np.arange(len(quads)),quads)
-	ax2.set_xlim(0, max(10,len(quads)))
-	return ln1,ln2,
+def animate_fun(h_bars):
+	def animate(idx):
+		global quads
+		ih0 = shd.gen_photocurrent(q,marginal,marginal_vac)
+		quads = np.append(quads,np.dot(ih0,y))
+		ln1.set_data(t,ih0)
+		ln2.set_data(1+np.arange(len(quads)),quads)
+		ax_pts.set_xlim(0, max(10,len(quads)))
+		return ln1,ln2,
+	return animate()
     
-annie = animation.FuncAnimation(fig,animate_fun,init_func = init_animation, interval = 10)
+annie = animation.FuncAnimation(fig,animate_fun(barz),init_func = init_animation, interval = 10)
 plt.show()
