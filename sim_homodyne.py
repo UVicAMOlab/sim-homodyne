@@ -20,6 +20,39 @@ def inv_trans_smp(marg,xL = -10, xR = 10,thrsh = 1e-4,x0 = 0):
             x = (x+xL)/2
     return x
 
+def inv_smp_num(cdf,xvals):
+    '''
+    Draws a sample from a probability density fn with cumulative cdf
+    Numerical implementaion of Inverse Sample Transform technique
+    
+        Parameters:
+            cdf (array): array representing the cumulative distribution of P(x)
+            xvals (array): x values corresponding to cdf(xvals)
+        
+        Returns:
+            (float): random number weighter accoring to P(x)
+    '''
+    # 1. Generate uniform random number on [0,1]
+    import numpy as np
+    u = np.random.rand() 
+    # Most probable guess is at mean of CDF, Start search here and search from [xL,xR] = entire array
+    x0 = int(np.argwhere(cdf>=np.mean(cdf))[0,0]) # start at mean of distribution
+    xL = 0
+    xR = len(cdf)-1
+    
+    # Perform binary search via bisection since cdf is monatomic
+    while (xR-xL) > 1:
+    # If guess is too high, value is in left half. Chop bounds and recenter
+        if(cdf[x0] > u):
+            xR = x0 
+            x0 = int(np.round((x0+xL)/2))
+    # Otherwie on right side
+        else:
+            xL = x0
+            x0 = int(np.round((x0+xR)/2))
+    return xvals[x0]
+
+
 def marginal_fock(n,x):
     ''' 
         Provides a marginal distribution of the n photon Fock state
