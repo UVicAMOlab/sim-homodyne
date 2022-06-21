@@ -1,9 +1,7 @@
 import sim_homodyne as shd
 import numpy as np
 from matplotlib import pyplot as plt
-import time
-from scipy import integrate
-from qutip import *
+from qutip import fock
 
 # Dummy test program. 
 
@@ -14,37 +12,22 @@ N = 12
 state = (fock(N,0) + fock(N,1))/np.sqrt(2)
 theta = np.pi/4
 
+# Define the quantum state
 cd,xvec = shd.cumulative(state,theta)
+# cd0,xvec = shd.cumulative(fock(N,0),theta)
 
-fig,axis = plt.subplots()
-
-axis.plot(xvec,cd)
-plt.show()
-
-
-# spn = 10
-# Npts = 10000
-# x = np.linspace(-1,1,Npts)*spn
-# pr = 2*x**2 * np.exp(-x**2)/np.sqrt(np.pi)
-# assert abs(integrate.trapz(pr,x)-1) < 1e-4,"\nProbability distribution appears to be unnormalized.\n Try extending range"
-
-# cd = integrate.cumtrapz(pr,x)
-# cd = np.append(cd,cd[-1])
+# Simulate Nsmp homodyne samples
+Nsmp = int(1e4)
+y = np.zeros(Nsmp)
 
 
+for k in range(Nsmp):
+    y[k] = shd.invtrans_sample(cd,xvec)
 
-# fig,(ax1,ax2) = plt.subplots(1,2,figsize=[10,4])
+fig,(ax1,ax2) = plt.subplots(1,2,figsize=(10,5))
 
-# ax1.plot(x,cd)
-# ax1.plot(x,pr)
-
-# Nsmp = int(1e3)
-# y = np.zeros(Nsmp)
-
-# for k in range(Nsmp):
-#     y[k] = shd.inv_smp_num(cd,x)
-
-# ax2.hist(y,200)
+ax1.plot(y,'.',markersize='2')
+ax2.hist(y,30,orientation='horizontal')
 
 # plt.show()
 
@@ -54,10 +37,6 @@ plt.show()
 # def marginal_vac(*args):
 #     return shd.marginal_fock(0,float(args[0]))
 
-# # Define the temporal mode and define complete orthogonal basis
-# t = np.linspace(-1,1,100)
-# y = np.exp(-0.5*(t/.1)**2)
-# q = shd.generate_basis(y)
 
 # ih_var = np.zeros(len(t))
 

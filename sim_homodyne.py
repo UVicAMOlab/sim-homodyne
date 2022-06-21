@@ -1,9 +1,16 @@
-def cumulative(state,theta,spn=10,Npts = 2500):
+def cumulative(state,theta,spn=10,Npts = 250):
+    from scipy import integrate
+    import numpy as np
+    
+    xvec = np.linspace(-1,1,Npts)*spn
+    large_marge = get_marginal(state,theta,spn,Npts)
+    return integrate.cumtrapz(large_marge,xvec,initial=0), xvec
+
+def get_marginal(state,theta,spn=10,Npts = 250):
     import numpy as np
     from scipy import integrate
     from qutip import wigner
     from scipy.ndimage import rotate
-
     xvec = np.linspace(-1,1,Npts)*spn
     W = wigner(state,xvec,xvec)
     Wr = rotate(W,180*theta/np.pi)
@@ -11,10 +18,9 @@ def cumulative(state,theta,spn=10,Npts = 2500):
     L0 = W.shape[0]
     chp = round((Lr-L0)/2)
     Wr = Wr[chp:chp+L0,chp:chp+L0] 
-    large_marge = integrate.trapz(Wr,xvec,axis=0)
-    return integrate.cumtrapz(large_marge,xvec,initial=0), xvec
-
-
+    return integrate.trapz(Wr,xvec,axis=0)
+    
+    
 
 def invtrans_sample(cdf,xvals):
     '''
@@ -59,7 +65,7 @@ def generate_basis(y):
     q,r = np.linalg.qr(x)
     return q
 
-def gen_photocurrent(modes,marg,marg_vac,scl = 1):
+def gen_photocurrent(modes,cdf,cdf_bg,xvec,scl = 1):
     '''
         Simulate a single time domain trace from a homodyne detector.
         modes: a set of orthonormal modes from generate_basis()
@@ -70,10 +76,11 @@ def gen_photocurrent(modes,marg,marg_vac,scl = 1):
     import numpy as np
     Npts = len(modes)
     ihd = np.zeros(Npts)
-    q0 = inv_trans_smp(marg)
+        
+    q0 = invtrans_sample(cdf,xvec)
     ihd += q0*modes[:,0]
     for k in range(1,Npts):
-        q0 = inv_trans_smp(marg_vac)
+        q0 = invtrans_sample(cdf_bg,xvec)
         ihd +=q0*modes[:,k]
     return ihd*scl
 
