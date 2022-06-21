@@ -51,8 +51,7 @@ def inv_smp_num(cdf,xvals):
             xL = x0
             x0 = int(np.round((x0+xR)/2))
     return xvals[x0]
-
-
+    
 def marginal_fock(n,x):
     ''' 
         Provides a marginal distribution of the n photon Fock state
