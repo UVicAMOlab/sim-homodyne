@@ -4,36 +4,39 @@ from matplotlib import pyplot as plt
 import time
 from scipy import integrate
 
+R = np.zeros([2,2])
+
+print(len(np.shape(R)))
 # Dummy test program. 
 
 # CURRENT VERSION: tests numerical inverse sample algorithm
 # Generates N homodyne samples and plots reconstructed quadratures
 
-spn = 10
-Npts = 10000
-x = np.linspace(-1,1,Npts)*spn
-pr = 2*x**2 * np.exp(-x**2)/np.sqrt(np.pi)
-assert abs(integrate.trapz(pr,x)-1) < 1e-4,"\nProbability distribution appears to be unnormalized.\n Try extending range"
+# spn = 10
+# Npts = 10000
+# x = np.linspace(-1,1,Npts)*spn
+# pr = 2*x**2 * np.exp(-x**2)/np.sqrt(np.pi)
+# assert abs(integrate.trapz(pr,x)-1) < 1e-4,"\nProbability distribution appears to be unnormalized.\n Try extending range"
 
-cd = integrate.cumtrapz(pr,x)
-cd = np.append(cd,cd[-1])
+# cd = integrate.cumtrapz(pr,x)
+# cd = np.append(cd,cd[-1])
 
 
 
-fig,(ax1,ax2) = plt.subplots(1,2,figsize=[10,4])
+# fig,(ax1,ax2) = plt.subplots(1,2,figsize=[10,4])
 
-ax1.plot(x,cd)
-ax1.plot(x,pr)
+# ax1.plot(x,cd)
+# ax1.plot(x,pr)
 
-Nsmp = int(1e3)
-y = np.zeros(Nsmp)
+# Nsmp = int(1e3)
+# y = np.zeros(Nsmp)
 
-for k in range(Nsmp):
-    y[k] = shd.inv_smp_num(cd,x)
+# for k in range(Nsmp):
+#     y[k] = shd.inv_smp_num(cd,x)
 
-ax2.hist(y,200)
+# ax2.hist(y,200)
 
-plt.show()
+# plt.show()
 
 # Define the marginal distributions
 # def marginal(*args):

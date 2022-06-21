@@ -1,24 +1,57 @@
-def inv_trans_smp(marg,xL = -10, xR = 10,thrsh = 1e-4,x0 = 0):
-    '''
-    Performs a sample of a probability distribution P(x) given its marginal
-        marg is a function representing the marginal distribution
-        xL and xR are limits for bisection. Most distns here will be mostly within [-3,3]
-        thrsh is the threshold for the bisection search. If within trsh, accept this value
-        x0 is the starting point for bisection this should be the mean of the distribtion.
-    '''
-    from numpy import random as rnd 
-    # These are the search limits
+# def inv_trans_smp(marg,xL = -10, xR = 10,thrsh = 1e-4,x0 = 0):
+#     '''
+#     Performs a sample of a probability distribution P(x) given its marginal
+#         marg is a function representing the marginal distribution
+#         xL and xR are limits for bisection. Most distns here will be mostly within [-3,3]
+#         thrsh is the threshold for the bisection search. If within trsh, accept this value
+#         x0 is the starting point for bisection this should be the mean of the distribtion.
+#     '''
+#     from numpy import random as rnd 
+#     # These are the search limits
 
-    u = rnd.rand()
-    x = x0
-    while abs(marg(x) - u) > thrsh: 
-        if marg(x) < u:
-            xL = x
-            x = (x+xR)/2
-        else:
-            xR = x
-            x = (x+xL)/2
-    return x
+#     u = rnd.rand()
+#     x = x0
+#     while abs(marg(x) - u) > thrsh: 
+#         if marg(x) < u:
+#             xL = x
+#             x = (x+xR)/2
+#         else:
+#             xR = x
+#             x = (x+xL)/2
+#     return x
+
+
+# def marginal_fock(n,x):
+#     ''' 
+#         Provides a marginal distribution of the n photon Fock state
+#         TODO: Find a way to generalize ... is there a recipe for generating?
+#     '''
+#     from scipy import special as spfn
+#     import numpy as np
+
+#     if x is None:
+#         x = np.linspace(-5/2,5/2,250)
+
+#     if n == 0:
+#         return (1+spfn.erf(x))/2
+#     elif n ==1:
+#         return (1+spfn.erf(x))/2 - x*np.exp(-x**2)/np.sqrt(np.pi)
+#     else:
+#         print('ERROR!\n\tn>1 not currently supported')
+#         return 0
+
+def rho2marg(rho,xvec):
+    import numpy as np
+    W00 = np.exp(-Xp**2 - Pp**2)/np.pi
+    W01 = W00*(Xp-1j*Pp)/np.sqrt(2)
+    W10 = W00*(Xp+1j*Pp)/np.sqrt(2)
+    W11 = W00*(2*(Xp**2 + Pp**2) - 1)
+
+    print(shape(rho))
+
+# def is_valid_densmat(rho):
+#     if len(np.shape(rho)) == 2:
+#         if()
 
 def inv_smp_num(cdf,xvals):
     '''
@@ -53,24 +86,6 @@ def inv_smp_num(cdf,xvals):
     return xvals[x0]
 
 
-def marginal_fock(n,x):
-    ''' 
-        Provides a marginal distribution of the n photon Fock state
-        TODO: Find a way to generalize ... is there a recipe for generating?
-    '''
-    from scipy import special as spfn
-    import numpy as np
-
-    if x is None:
-        x = np.linspace(-5/2,5/2,250)
-
-    if n == 0:
-        return (1+spfn.erf(x))/2
-    elif n ==1:
-        return (1+spfn.erf(x))/2 - x*np.exp(-x**2)/np.sqrt(np.pi)
-    else:
-        print('ERROR!\n\tn>1 not currently supported')
-        return 0
 
 def generate_basis(y):
     import numpy as np
