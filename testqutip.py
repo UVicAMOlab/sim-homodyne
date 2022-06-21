@@ -30,3 +30,5 @@ print(f'shape of rotated Wigner fn is {np.shape(Wr)}')
 ax1.contourf(Wr,100)
 ax2.plot(xvec,marge)
 ax2.plot(xvec,cumlt)
+
+plt.show()
