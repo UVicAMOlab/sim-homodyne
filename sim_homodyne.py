@@ -1,26 +1,22 @@
-def inv_trans_smp(marg,xL = -10, xR = 10,thrsh = 1e-4,x0 = 0):
-    '''
-    Performs a sample of a probability distribution P(x) given its marginal
-        marg is a function representing the marginal distribution
-        xL and xR are limits for bisection. Most distns here will be mostly within [-3,3]
-        thrsh is the threshold for the bisection search. If within trsh, accept this value
-        x0 is the starting point for bisection this should be the mean of the distribtion.
-    '''
-    from numpy import random as rnd 
-    # These are the search limits
+def cumulative(state,theta,spn=10,Npts = 2500):
+    import numpy as np
+    from scipy import integrate
+    from qutip import wigner
+    from scipy.ndimage import rotate
 
-    u = rnd.rand()
-    x = x0
-    while abs(marg(x) - u) > thrsh: 
-        if marg(x) < u:
-            xL = x
-            x = (x+xR)/2
-        else:
-            xR = x
-            x = (x+xL)/2
-    return x
+    xvec = np.linspace(-1,1,Npts)*spn
+    W = wigner(state,xvec,xvec)
+    Wr = rotate(W,180*theta/np.pi)
+    Lr = Wr.shape[0]
+    L0 = W.shape[0]
+    chp = round((Lr-L0)/2)
+    Wr = Wr[chp:chp+L0,chp:chp+L0] 
+    large_marge = integrate.trapz(Wr,xvec,axis=0)
+    return integrate.cumtrapz(large_marge,xvec,initial=0), xvec
 
-def inv_smp_num(cdf,xvals):
+
+
+def invtrans_sample(cdf,xvals):
     '''
     Draws a sample from a probability density fn with cumulative cdf
     Numerical implementaion of Inverse Sample Transform technique
@@ -51,25 +47,6 @@ def inv_smp_num(cdf,xvals):
             xL = x0
             x0 = int(np.round((x0+xR)/2))
     return xvals[x0]
-    
-def marginal_fock(n,x):
-    ''' 
-        Provides a marginal distribution of the n photon Fock state
-        TODO: Find a way to generalize ... is there a recipe for generating?
-    '''
-    from scipy import special as spfn
-    import numpy as np
-
-    if x is None:
-        x = np.linspace(-5/2,5/2,250)
-
-    if n == 0:
-        return (1+spfn.erf(x))/2
-    elif n ==1:
-        return (1+spfn.erf(x))/2 - x*np.exp(-x**2)/np.sqrt(np.pi)
-    else:
-        print('ERROR!\n\tn>1 not currently supported')
-        return 0
 
 def generate_basis(y):
     import numpy as np
