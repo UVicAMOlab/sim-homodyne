@@ -13,7 +13,8 @@ state = (fock(N,0) + fock(N,1))/np.sqrt(2)
 theta = np.pi/4
 
 # Define the quantum state
-cd,xvec = shd.cumulative(state,theta)
+cd,xvec = shd.cumulative(state,theta,Npts = 750)
+
 # cd0,xvec = shd.cumulative(fock(N,0),theta)
 
 # Simulate Nsmp homodyne samples
@@ -25,11 +26,13 @@ for k in range(Nsmp):
     y[k] = shd.invtrans_sample(cd,xvec)
 
 fig,(ax1,ax2) = plt.subplots(1,2,figsize=(10,5))
-
 ax1.plot(y,'.',markersize='2')
-ax2.hist(y,30,orientation='horizontal')
-
-# plt.show()
+ax2.hist(y,30,orientation='horizontal',density=True,label = 'Histogram')
+# For comparison only
+marge = shd.get_marginal(state,theta,Npts = 750)
+ax2.plot(marge,xvec,label = 'Marginal')
+ax2.set_ylim(-5,5)
+ax2.legend()
 
 # Define the marginal distributions
 # def marginal(*args):
