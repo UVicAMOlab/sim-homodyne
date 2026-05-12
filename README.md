@@ -1,8 +1,10 @@
+# Homodyne Detection of Temporally Resolved Quantum States
+
 This directory contains python code to simulate homodyne photocurrent analysis. We deal with **timing jitter**, **phase jitter**, **mode and marginal inference**, and **Wigner function reconstruction**.
 
 The first section of the notebook contains the framework for simulating homodyne photocurrent.
 
-# BHD Photocurrent Framework
+## BHD Photocurrent Framework
 
 Here, we go over the important functions that create our framework for simulating BHD.
 
